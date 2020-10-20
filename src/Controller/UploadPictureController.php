@@ -8,9 +8,12 @@ use App\Repository\PlayerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
@@ -45,7 +48,6 @@ class UploadPictureController extends AbstractController
      */
     public function temporaryUploadAction(Request $request)
     {
-
          //1. on commence par récupérer l'objet envoyé (normalement une image)
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('image');
@@ -57,7 +59,8 @@ class UploadPictureController extends AbstractController
 
                 //4. transformation du nom de l'image en valeur UNIQUE pour pas de conflit plus tard entre les utilisateurs
                 $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $newFilename = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$uploadedFile->guessClientExtension();
+                $filenameWithoutExtension = Urlizer::urlize($originalFilename).'-'.uniqid();
+                $newFilename = $filenameWithoutExtension.'.'.$uploadedFile->guessClientExtension();
 
                 //5. on récupère l'utilisateur connecté, on vérifie que c'est bien un ROLE_PLAYER
                 $user = $this->security->getUser();
@@ -72,10 +75,10 @@ class UploadPictureController extends AbstractController
                     if ( $player->getPicture()){
                         $originalPicture = $player->getPicture();
                         //Si oui on la supprime
-                        unlink('uploads/' . $originalPicture);
+                        unlink('uploads/' . $originalPicture . ".jpeg");
                     }
                     //8. on lui attribue la nouvelle image
-                    $player->setPicture($newFilename);
+                    $player->setPicture($filenameWithoutExtension);
                     //9. déplacement de l'image dans le dossier de destination
                     $uploadedFile->move(
                         $destination,
@@ -90,18 +93,27 @@ class UploadPictureController extends AbstractController
                 }else{
                     return $this->json(["success" => false, "violations" => "Vous n'avez pas les droits" ], 400);
                 }
-
-
             }else{
                 return $this->json(["success" => false, "violations" => "Votre image n'est pas au format .jpeg" ], 400);
             }
-
-
-
-
-
         }else{
             return $this->json(["success" => false, "violations" => "Vous n'avez rien envoyé" ], 400);
+        }
+    }
+
+    /**
+     * @param string $file
+     * @Route("/api/image/{file}")
+     * @return BinaryFileResponse
+     */
+    public function getProfilePicture(string $file)
+    {
+        $destination =  $this->getParameter('kernel.project_dir').'/public/uploads';
+        $path = $destination .'/'. $file .".jpeg";
+        if (file_exists($path)){
+            return new BinaryFileResponse($path);
+        }else{
+            return $this->json(["success" => false, "violations" => "l'image demandée n'existe pas"], 400);
         }
     }
 }
