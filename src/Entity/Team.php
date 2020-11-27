@@ -14,6 +14,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=TeamRepository::class)
+ * @UniqueEntity(
+ *     fields={"label", "category", "club"},
+ *     errorPath="label",
+ *     message="Ce nom d'equipe existe déjà dans cette categorie"
+ * )
  * @ApiResource(
  *     attributes={
  *     },
