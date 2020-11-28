@@ -33,6 +33,21 @@ class TeamRepository extends ServiceEntityRepository
         ]);
         return $stmt->fetchAll();
     }
+
+    public function excludeCoachOnAllTeams($coachId){
+        $cnx = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            UPDATE team
+            SET coach_id = null
+            WHERE coach_id = :coachId
+        ';
+        $stmt = $cnx->prepare($sql);
+        $stmt->execute([
+            'coachId' => $coachId
+        ]);
+    }
+
     // /**
     //  * @return Team[] Returns an array of Team objects
     //  */

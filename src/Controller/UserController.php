@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Repository\ClubRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use mysql_xdevapi\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,7 +45,6 @@ class UserController extends AbstractController
      * @Route("api/user/{userId}/club/{clubId}", methods={"PUT"})
      * @param $userId
      * @param $clubId
-     * @return JsonResponse
      */
     public function setClubForUserAdmin($userId, $clubId){
         $user = $this->userRepository->find($userId);
@@ -55,5 +55,37 @@ class UserController extends AbstractController
         $this->manager->flush();
 
         return $this->json(['message' => 'modification de l\'utilisateur confirmé'], 200);
+    }
+
+    /**
+     * @Route("api/admins/user/{userId}/{userType}/{allowed}", methods={"PATCH"})
+     * @param Int $userId
+     * @param String $userType
+     * @param String $allowed
+     */
+    public function switchAllowed(int $userId, string $userType, string $allowed)
+    {
+        $rep = null;
+        if ($allowed === "debloquer") {
+            switch ($userType) {
+                case "player":
+                    $rep = $this->userRepository->switchPlayerToAllowed($userId);
+                    break;
+                case "coach":
+                    $rep = $this->userRepository->switchCoachToAllowed($userId);
+                    break;
+            }
+        } else if ($allowed === "bloquer") {
+            switch ($userType) {
+                case "player":
+                    $rep = $this->userRepository->switchPlayerToNotAllowed($userId);
+                    break;
+                case "coach":
+                    $rep = $this->userRepository->switchCoachToNotAllowed($userId);
+                    break;
+            }
+        }
+
+        return $this->json(['message' => $rep,], 200);
     }
 }

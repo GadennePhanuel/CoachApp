@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Encoder\JsonDecode;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -34,6 +35,66 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newEncodedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+    
+    public function switchPlayerToAllowed($userId){
+        $cnx = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            UPDATE user
+            SET roles = :roles
+            WHERE id = :id_user
+        ';
+        $stmt = $cnx->prepare($sql);
+        $stmt->execute([
+            'id_user' => $userId,
+            'roles' =>  JSON_encode(["ROLE_PLAYER"])
+        ]);
+    }
+
+    public function switchPlayerToNotAllowed($userId){
+        $cnx = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            UPDATE user
+            SET roles = :roles
+            WHERE id = :id_user
+        ';
+        $stmt = $cnx->prepare($sql);
+        $stmt->execute([
+            'id_user' => $userId,
+            'roles' => JSON_encode(["ROLE_NOT_ALLOWED","ROLE_PLAYER"])
+        ]);
+    }
+
+    public function switchCoachToAllowed($userId){
+        $cnx = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            UPDATE user
+            SET roles = :roles
+            WHERE id = :id_user
+        ';
+        $stmt = $cnx->prepare($sql);
+        $stmt->execute([
+            'id_user' => $userId,
+            'roles' => JSON_encode(["ROLE_COACH"])
+        ]);
+    }
+
+    public function switchCoachToNotAllowed($userId){
+        $cnx = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            UPDATE user
+            SET roles = :roles
+            WHERE id = :id_user
+        ';
+        $stmt = $cnx->prepare($sql);
+        $stmt->execute([
+            'id_user' => $userId,
+            'roles' => JSON_encode(["ROLE_NOT_ALLOWED","ROLE_COACH"])
+        ]);
     }
 
     // /**

@@ -26,6 +26,10 @@ class ExcludePlayerOfTacticsTeam implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param ViewEvent $event
+     * @Route("/api/admins/user/{userId}/excludeOnTeams", methods={"PATCH"})
+     */
     public function excludePlayerOfTactics(ViewEvent $event)
     {
              $result = $event->getControllerResult();

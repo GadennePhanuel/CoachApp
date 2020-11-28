@@ -47,7 +47,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"users_read", "clubs_read"})
+     * @Groups({"users_read", "clubs_read", "admins_read", "coachs_read", "players_read"})
      * @Assert\NotBlank(message="Role de l'utilisateur obligatoire")
      */
     private $roles = [];
