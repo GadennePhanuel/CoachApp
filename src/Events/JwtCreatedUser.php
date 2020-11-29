@@ -15,7 +15,7 @@ class JwtCreatedUser
         $data['firstName'] = $user->getFirstName();
         $data['lastName'] = $user->getLastName();
         $data['id'] = $user->getId();
-        if($data['roles'][0] === 'ROLE_PLAYER') {
+        if($data['roles'][0] === 'ROLE_PLAYER' || $data['roles'][1] === 'ROLE_PLAYER') {
             $player = $user->getPlayers()[0];
 
             if ($player != null){
@@ -31,7 +31,7 @@ class JwtCreatedUser
                 $date['player'] = null;
             }
         }
-        else if($data['roles'][0] === 'ROLE_COACH') {
+        else if($data['roles'][0] === 'ROLE_COACH' || $data['roles'][1] === 'ROLE_COACH') {
             $coach = $user->getCoaches()[0];
             if ($coach != null){
                 $data['coach'] = $coach->getId();

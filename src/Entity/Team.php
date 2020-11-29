@@ -41,7 +41,7 @@ class Team
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=75, unique=true)
+     * @ORM\Column(type="string", length=75)
      * @Groups({"teams_read", "clubs_read", "players_read", "trainings_read", "tactics_read", "encounters_read", "coachs_read"})
      * @Assert\NotBlank(message="Un nom d'équipe est obligatoire")
      * @Assert\Length(min="2", max="75", minMessage="Le nom d'équipe doit être compris entre 2 et 75 caractéres", maxMessage="Le nom d'équipe doit être compris entre 2 et 75 caractéres")
