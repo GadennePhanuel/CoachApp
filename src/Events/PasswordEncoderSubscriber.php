@@ -22,7 +22,6 @@ class PasswordEncoderSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        // TODO: Implement getSubscribedEvents() method.
         return [
                 KernelEvents::VIEW => ['encodePassword',  EventPriorities::PRE_WRITE]
                 //donc là on parle au coeur même de Symfony = le Kernel; on lui dit -> Voilà, notre Classe elle s'intéresse à l'événement qui s'appelle VIEW,

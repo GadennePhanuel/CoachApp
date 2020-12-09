@@ -25,6 +25,121 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     denormalizationContext={
  *          "disable_type_enforcement"=true
  *     },
+ *     collectionOperations={"POST","GET",
+            "sendMail"={
+ *              "method"="post",
+ *              "path"="/sendEmail",
+ *              "controller"="App\Controller\MailerController",
+ *              "openapi_context"={
+ *                  "summary"="send one or more mail to members of the club",
+ *                  "description"="send one or more mail to members of the club",
+ *                  "parameters"={
+ *                       {
+ *                          "in"="query",
+ *                          "name"="email",
+ *                          "schema"={
+ *                              "type"="object",
+ *                              "properties"={
+ *                                  "receivers"={
+ *                                      "description"="list of recipient emails, separated by ; ",
+ *                                      "type"="string"
+ *                                  },
+ *                                  "message"={
+*                                       "description"="content message",
+ *                                      "type"="string"
+ *                                  },
+ *                                  "subect"={
+ *                                      "description"="subject for the email",
+ *                                      "type"="string"
+ *                                  }
+ *                              }
+ *                          },
+ *                          "required"="true"
+ *                      }
+ *                  },
+ *                  "requestBody"={
+ *                      "content"={
+ *                          "application/json"={
+ *                              "schema"={
+ *                                  "type"="object",
+ *                                  "properties"={
+ *                                       "receivers"={
+ *                                          "description"="list of recipient emails, separated by ; ",
+ *                                          "type"="string"
+ *                                      },
+ *                                      "message"={
+ *                                          "description"="content message",
+ *                                          "type"="string"
+ *                                      },
+ *                                      "subect"={
+ *                                          "description"="subject for the email",
+ *                                          "type"="string"
+ *                                      }
+ *                                  }
+ *                              }
+ *                          }
+ *                      }
+ *                  },
+ *                  "responses"={
+ *                      "200"={
+ *                          "description"="success"
+ *                      },
+ *                      "400"={
+ *                          "description"="Veuillez saisir un message ou Veuillez préciser le sujet de votre email ou Veuillez sélectionner au moins un destinataire"
+ *                      }
+ *                  }
+ *              }
+ *          },
+ *     },
+ *     itemOperations={"GET", "PUT", "PATCH",
+ *          "DELETE"={"security"="is_granted('ROLE_ADMIN')"},
+ *          "switchAllowed"={
+ *              "method"="patch",
+ *              "path"="/admins/user/{userId}/{userType}/{allowed}",
+ *              "controller"="App\Controller\UserController",
+ *              "openapi_context"={
+ *                  "summary"="block / unblock player or coach user access",
+ *                  "description"="allows to block or unlock the access of a player or a coach",
+ *                  "parameters"={
+ *                      {
+ *                          "in"="path",
+ *                          "name"="userId",
+ *                          "schema"={"type"="integer"},
+ *                          "required"="true",
+ *                          "description"="Target user id"
+ *                      },
+ *                      {
+ *                          "in"="path",
+ *                          "name"="userType",
+ *                          "schema"={"type"="string", "enum"={"player","coach"}},
+ *                          "required"="true",
+ *                          "description"="player or coach : necessary for the controller to redefine the roles's user"
+ *                      },
+ *                      {
+ *                          "in"="path",
+ *                          "name"="allowed",
+ *                          "schema"={"type"="string", "enum"={"block", "unblock"}},
+ *                          "required"="true",
+ *                          "description"="block or unblock for switch allowed user : necessary for the controller to redefine the roles's user"
+ *                      },
+ *                  },
+ *                  "responses"= {
+                        "200"= {
+                            "description"= "success: user access roles are updated"
+                        },
+ *                      "400"={
+ *                          "description"= "failed: wrong parameter : wrong_parameter_name"
+ *                      },
+ *                      "404"= {
+                            "description"= "failed: Resource not found"
+                        },
+ *                      "401"={
+ *                          "description"="Unauthorized"
+ *                      }
+                    }
+ *              }
+ *          },
+ *    },
  * )
  */
 class User implements UserInterface

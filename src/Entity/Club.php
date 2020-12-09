@@ -18,12 +18,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ApiResource(
  *     normalizationContext={"groups"={"clubs_read"}},
  *     denormalizationContext={"disable_type_enforcement"=true},
- *     itemOperations={"GET", "PUT", "DELETE", "notInTeam"={
- *          "method"="get",
- *          "path"="/clubs/{id}/playersWithoutTeam",
- *          "controller"="App\Controller\PlayersWithoutTeamController"
- *      }
- *    }
+ *     collectionOperations={"POST"={"security"="is_granted('ROLE_ADMIN')"}},
+ *     itemOperations={
+ *          "GET",
+ *          "PUT"={"security"="is_granted('ROLE_ADMIN')"},
+ *          "DELETE"={"security"="is_granted('ROLE_ADMIN')"}
+ *     }
  * )
  */
 class Club
@@ -64,7 +64,7 @@ class Club
     }
 
     /**
-     * permet de retourner le nombre de coach et player dans une equipe
+     * allows to return the number of coach and player in a team
      * @Groups({"clubs_read"})
      * @return int[]
      */

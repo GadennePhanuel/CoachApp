@@ -37,62 +37,67 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
     
-    public function switchPlayerToAllowed($userId){
+    public function switchPlayerToAllowed($userId, $clubId){
         $cnx = $this->getEntityManager()->getConnection();
 
         $sql = '
             UPDATE user
             SET roles = :roles
-            WHERE id = :id_user
+            WHERE id = :id_user AND club_id = :clubId
         ';
         $stmt = $cnx->prepare($sql);
-        $stmt->execute([
+        return $stmt->execute([
             'id_user' => $userId,
+            'clubId' => $clubId,
             'roles' =>  JSON_encode(["ROLE_PLAYER"])
+
         ]);
     }
 
-    public function switchPlayerToNotAllowed($userId){
+    public function switchPlayerToNotAllowed($userId, $clubId){
         $cnx = $this->getEntityManager()->getConnection();
 
         $sql = '
             UPDATE user
             SET roles = :roles
-            WHERE id = :id_user
+            WHERE id = :id_user AND club_id = :clubId
         ';
         $stmt = $cnx->prepare($sql);
-        $stmt->execute([
+        return $stmt->execute([
             'id_user' => $userId,
+            'clubId' => $clubId,
             'roles' => JSON_encode(["ROLE_NOT_ALLOWED","ROLE_PLAYER"])
         ]);
     }
 
-    public function switchCoachToAllowed($userId){
+    public function switchCoachToAllowed($userId, $clubId){
         $cnx = $this->getEntityManager()->getConnection();
 
         $sql = '
             UPDATE user
             SET roles = :roles
-            WHERE id = :id_user
+            WHERE id = :id_user AND club_id = :clubId
         ';
         $stmt = $cnx->prepare($sql);
-        $stmt->execute([
+        return $stmt->execute([
             'id_user' => $userId,
+            'clubId' => $clubId,
             'roles' => JSON_encode(["ROLE_COACH"])
         ]);
     }
 
-    public function switchCoachToNotAllowed($userId){
+    public function switchCoachToNotAllowed($userId, $clubId){
         $cnx = $this->getEntityManager()->getConnection();
 
         $sql = '
             UPDATE user
             SET roles = :roles
-            WHERE id = :id_user
+            WHERE id = :id_user AND club_id = :clubId
         ';
         $stmt = $cnx->prepare($sql);
-        $stmt->execute([
+        return $stmt->execute([
             'id_user' => $userId,
+            'clubId' => $clubId,
             'roles' => JSON_encode(["ROLE_NOT_ALLOWED","ROLE_COACH"])
         ]);
     }

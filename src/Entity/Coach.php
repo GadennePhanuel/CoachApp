@@ -15,11 +15,41 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     attributes={"order"={"user.lastName": "ASC"}},
  *     normalizationContext={"groups"={"coachs_read"}},
- *     itemOperations={"GET", "PUT", "DELETE", "teamsCoach"={
- *          "method"="get",
- *          "path"="/coaches/{id}/teams",
- *          "controller"="App\Controller\TeamsByCoachController"
- *      }
+ *     itemOperations={"GET",
+ *          "DELETE"={"security"="is_granted('ROLE_ADMIN')"},
+ *          "excludeCoachOnAllTeams"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+                "method"="patch",
+ *              "path"="/admins/coach/{coachId}/excludeOnTeams",
+ *              "controller"="App\Controller\excludeCoachOnAllTeams",
+ *              "openapi_context"={
+*                       "summary"="exclude a coach from all these teams",
+*                       "description"="exclude a coach from all these teams",
+ *                      "parameters"={
+ *                          {
+ *                              "in"="path",
+ *                              "name"="coachId",
+ *                              "schema"={"type"="integer"},
+ *                              "required"="true",
+ *                              "description"="coach id target"
+ *                          }
+ *                      },
+ *                      "responses"={
+                            "200"={
+                                "description"="coach are exclude from all these teams"
+                            },
+ *                          "400"={
+ *                              "description"="wrong parameter, integer expected"
+ *                          },
+ *                          "404"={
+                                "description"="Resource not found"
+                            },
+ *                          "401"={
+ *                              "description"="Unauthorized"
+ *                          }
+                        }
+*               }
+ *          }
  *     }
  * )
  */

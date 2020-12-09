@@ -19,32 +19,19 @@ class TeamRepository extends ServiceEntityRepository
         parent::__construct($registry, Team::class);
     }
 
-    public function findAllTeamsByCoachId($idCoach){
-        $cnx = $this->getEntityManager()->getConnection();
-
-        $sql = '
-            SELECT *
-            FROM team
-            WHERE coach_id = :id_coach
-        ';
-        $stmt = $cnx->prepare($sql);
-        $stmt->execute([
-            'id_coach' => $idCoach
-        ]);
-        return $stmt->fetchAll();
-    }
-
-    public function excludeCoachOnAllTeams($coachId){
+    public function excludeCoachOnAllTeams($coachId, $coachClub){
+        //utiliser clubId dans table team
         $cnx = $this->getEntityManager()->getConnection();
 
         $sql = '
             UPDATE team
             SET coach_id = null
-            WHERE coach_id = :coachId
+            WHERE coach_id = :coachId AND club_id = :coachClub
         ';
         $stmt = $cnx->prepare($sql);
-        $stmt->execute([
-            'coachId' => $coachId
+        return $stmt->execute([
+            'coachId' => $coachId,
+            'coachClub' => $coachClub
         ]);
     }
 

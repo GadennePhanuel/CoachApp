@@ -27,7 +27,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     normalizationContext={
  *       "groups"={"teams_read"}
- *     }
+ *     },
+ *     itemOperations={"GET", "PUT", "PATCH", "DELETE"={"security"="is_granted('ROLE_ADMIN')"}}
  * )
  */
 class Team

@@ -22,8 +22,107 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     subresourceOperations={
  *          "api_teams_players_get_subresource"={
-            "normalization_context"={"groups"={"players_subresource"}}
- *     }}
+                "normalization_context"={"groups"={"players_subresource"}}
+ *          }
+ *     },
+ *     collectionOperations={"POST", "GET",
+ *          "uploadNewPicture"={
+ *              "method"="post",
+ *              "path"="/upload",
+ *              "controller"="App\Controller\UploadPictureController",
+ *              "openapi_context"={
+ *                  "summary"="upload a profile image",
+ *                  "description"="upload a profile image",
+ *                  "parameters"={
+ *                      {"in"="query",
+ *                      "name"="bodyFormData",
+ *                      "schema"={"type"="blob"},
+ *                      "required"="true",
+ *                      "description"="image file in blob format"
+ *                      },
+ *                      {   "in"="header",
+ *                          "name"="contentType",
+ *                          "type"="string",
+ *                          "decription"="multipart/form-data",
+ *                          "required"="true"
+ *                      }
+ *                  },
+ *                  "requestBody"={
+ *                      "content"={
+ *                          "application/json"={
+ *                              "schema"={
+ *                                  "type"="object",
+ *                                  "properties"={
+ *                                      "bodyFormData"={
+ *                                          "description"="image file in blob format",
+ *                                          "type"="blob"
+ *                                      },
+ *                                      "contentType"={
+ *                                          "description"="multipart/form-data",
+ *                                          "type"="string"
+ *                                      }
+ *                                  }
+ *
+ *                              }
+ *                          }
+ *                      }
+ *                  },
+ *                  "responses"={
+ *                      "200"={"description"="success"},
+ *                      "400"={"description"="Vous n'avez pas les droits ou Votre image doit être un jpeg ou un png ou Vous n'avez rien envoyé"}
+ *                  }
+ *              }
+ *          }
+ *     },
+ *     itemOperations={"GET", "PUT", "PATCH",
+ *          "DELETE"={"security"="is_granted('ROLE_ADMIN')"},
+ *          "getProfilePicture"={
+ *              "method"="get",
+ *              "path"="/image/{file}",
+ *              "controller"="App\Controller\UploadPictureController",
+ *              "openapi_context"={
+ *                  "summary"="recovers the profile image",
+ *                  "description"="recovers the profile image",
+ *                  "parameters"={
+ *                      {"in"="path",
+ *                      "name"="picture",
+ *                      "schema"={"type"="string"},
+ *                      "required"="true",
+ *                      "description"="image file name"
+ *                      }
+ *                  },
+ *                  "requestBody"={
+ *                      "content"={
+ *                          "application/json"={
+ *                              "schema"={
+ *                                  "type"="object",
+ *                                  "properties"={
+ *                                      "picture"={
+ *                                          "description"="image file name format",
+ *                                          "type"="string"
+ *                                      }
+ *                                  }
+ *                              }
+ *                          }
+ *                      }
+ *                  },
+ *                  "responses"={
+ *                      "200"={
+ *                          "description"="profil picture",
+ *                           "content"={
+ *                                "image/jpg"={
+ *                                      "schema"={
+ *                                          "type"="string",
+ *                                          "format"="binary"
+ *                                      }
+ *                                  }
+ *                            }
+ *                      },
+ *                      "400"={"description"="l'image demandée n'existe pas"}
+ *                  }
+ *              }
+ *          }
+ *     }
  * )
  */
 class Player
@@ -103,7 +202,7 @@ class Player
     }
 
     /**
-     * Permet de récupérer le total de carton rouge du player
+     * Retrieves the total red card of the player
      * @Groups({"players_read", "teams_read"})
      * @return int
      */
@@ -115,7 +214,7 @@ class Player
     }
 
     /**
-     * Permet de récupérer le total de carton rouge du player
+     * Retrieves the total yellow card of the player
      * @Groups({"players_read", "teams_read"})
      * @return int
      */
@@ -127,7 +226,7 @@ class Player
     }
 
     /**
-     * Permet de récupérer le total de carton rouge du player
+     * Retrieves the total assisted pass of the player
      * @Groups({"players_read", "teams_read"})
      * @return int
      */
@@ -139,7 +238,7 @@ class Player
     }
 
     /**
-     * Permet de récupérer le total de carton rouge du player
+     * Retrieves the goal total of the player
      * @Groups({"players_read", "teams_read"})
      * @return int
      */
